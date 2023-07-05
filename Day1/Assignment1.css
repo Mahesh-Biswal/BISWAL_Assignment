@@ -1,0 +1,14 @@
+ /* define Class*/
+ input[type ="text"] {
+    background-color: yellow;
+}
+input[type ="button"] {
+    background-color: blue;
+}
+article[.abc] {
+font-style: italic;
+}
+table,th,td{
+    border: double;
+    color: red;
+}
