@@ -5,11 +5,11 @@
     padding: 10px;
     justify-content: space-between;
     gap: 10px;
-    background-color: aqua;
+    background-color: rgb(14, 228, 125);
 }
 .grid-item:hover {
     border: 2px solid red;
-    background-color: greenyellow;
+    background-color: rgb(234, 250, 5);
     padding: 20px;
     font-size: 20px;
     text-align: center;
@@ -41,6 +41,10 @@ p{
     display: none;
     background-color: coral;
     padding: 20px;
+    font-size: x-large;
+}
+#myTable {
+    width: 100%;
 }
 .flex-container {
     display: flex;
