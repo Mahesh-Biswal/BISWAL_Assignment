@@ -1,0 +1,25 @@
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table td {
+  color: red;
+  padding: 8px 20px;
+  border: 1px solid #ddd;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background-color: gray;
+}
+
+.table-danger {
+  background-color: aqua;
+  color: orange;
+}
+
+.table-responsive {
+  overflow-x: scroll;
+}
+
+/*# sourceMappingURL=mixinStylesforTable.css.map */
