@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Table Dynamically</title>
+    <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="./../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./tableGenerateDynamicaly.js"></script>
+    <script>
+        $(document).ready(function(){
+          var table = generateTable();
+          $("#dvTable").html(table);
+          showingRowData();
+          $("#searchInput").on("input", searchData);
+          $("#filterByRadioInput").on("input", filterByRadioInput);
+        });
+     </script>
+     <style>
+        body {
+            background-color: azure;
+        }
+        h1 {
+            text-align: center;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-weight: bold;
+            color: chocolate;
+        }
+     </style>
+</head>
+<body>
+    <h1>Search records from table</h1>
+    <div class="container">
+    <label for="searchInput">Search Below ↓</label>
+    <input type="text" id="searchInput" placeholder="Search" class="form-control">
+    </div>
+    <div id="searchText"></div>
+    <div class="container">
+        <label for="propertySelect">Select Property:</label>
+        <input type="radio" name="property" value="ProductId"> ProductId
+        <input type="radio" name="property" value="ProductName"> ProductName
+        <input type="radio" name="property" value="CategoryName"> CategoryName
+        <input type="radio" name="property" value="Description"> Description
+        <input type="radio" name="property" value="Manufacturer"> Manufacturer
+        <input type="radio" name="property" value="Price"> Price
+        <input type="text" placeholder="Search By selecting a Property Above ⇑" id="filterByRadioInput" class="form-control">
+      </div>
+    <h1>Here is my table Generated Dynamically</h1>
+    <div class="container" id="dvTable">
+</body>
+</html>
