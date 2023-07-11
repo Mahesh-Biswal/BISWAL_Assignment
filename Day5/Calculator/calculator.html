@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="./calculator.css">
+    <script src="./calculator.js"></script>
+    <script src="./../../node_modules/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Here is my Calculator</h1>
+    <div class="calculator">
+        <input type="text" class="display" disabled>
+        <div class="buttons">
+          <button type="button" class="operator" onclick="displayCharacter('/')">/</button>
+          <button type="button" onclick="displayCharacter('%')">%</button>
+          <button type="button" onclick="backSpace()">⌫</button>
+          <button type="button" class="clear" onclick="clearDisplay()">C</button>
+          <button type="button" class="operator" onclick="displayCharacter('*')">*</button>
+          <button type="button" onclick="displayCharacter('7')">7</button>
+          <button type="button" onclick="displayCharacter('8')">8</button>
+          <button type="button" onclick="displayCharacter('9')">9</button>
+          <button type="button" class="operator" onclick="displayCharacter('-')">-</button>
+          <button type="button" onclick="displayCharacter('4')">4</button>
+          <button type="button" onclick="displayCharacter('5')">5</button>
+          <button type="button" onclick="displayCharacter('6')">6</button>
+          <button type="button" class="operator" onclick="displayCharacter('+')">+</button>
+          <button type="button" onclick="displayCharacter('1')">1</button>
+          <button type="button" onclick="displayCharacter('2')">2</button>
+          <button type="button" onclick="displayCharacter('3')">3</button>
+          <button type="button" onclick="displayCharacter('**')">^</button>
+          <button type="button" onclick="displayCharacter('0')">0</button>
+          <button type="button" onclick="displayCharacter('.')">.</button>
+          <button class="equals" type="button" onclick="evaluateinputValue()">=</button>
+        </div>
+      </div>
+</body>
+</html>
