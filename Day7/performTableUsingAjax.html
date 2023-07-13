@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Table Dynamically</title>
+    <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="./../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./performTableUsingAjax.js"></script>
+    <script>
+        var url = "https://catprdapi.azurewebsites.net/api/Product";
+        var isupdate;
+        $(document).ready(function(){
+            loadData();
+            $("#btn-save-update").on('click', function(){
+                save(isupdate ? $("#txtProductUniqueId").val() :  '');
+            });
+            $("#txtProductUniqueId").on('change',function(){
+                loadDataByclick($(this).val());
+            });
+            // $("#btn-delete").on('click', function(){
+            //     remove();
+            // });
+            $(document).on('click', '#btn-delete', function() {
+                console.log('Button clicked!');
+                var rowData = [];
+                var row = $(this).closest('tr');
+                row.find('td').each(function () {
+                    rowData.push($(this).text());
+                });
+                // console.log(rowData);
+                // console.log(rowData[0]);
+
+                remove(rowData[0]);
+            });
+            $(document).on('click', '#click-to-fill', function() {
+                console.log('Button clicked!');
+                var rowData = [];
+                var row = $(this).closest('tr');
+                row.find('td').each(function () {
+                    rowData.push($(this).text());
+                });
+                console.log(rowData);
+                console.log(rowData[0]);
+
+                loadDataByclick(rowData[0]);
+            });
+        });
+        function loadData(){
+            $.ajax({
+                url:url,
+                method: 'GET'
+            })
+             .done(function(response){
+                /* Read data and pass it to the generateTable() method */
+                // var canDelete = $('input[name=canDelete]:checked').val();
+                var canDelete = true;
+                var table = generateTable(response,canDelete);
+                /* Show table in dvTable div */
+                $("#dvTable").html(table);
+                $("#statusMessage").html('Call is successful');
+            })
+           .fail(function(error){
+                $("#statusMessage").html(`Call Failed ${error}`);
+                alert(JSON.stringify(error));
+            }); 
+        }
+        function loadDataByclick(id){
+            $.ajax({
+                url:`${url}/${id}`,
+                method: 'GET'
+            }).done(function(response){
+                /* Show data in input elements */
+                $("#txtProductUniqueId").val(response.ProductUniqueId);
+                $("#txtProductId").val(response.ProductId);
+                $("#txtProductName").val(response.ProductName);
+                $("#txtDescription").val(response.Description);
+                $("#txtprice").val(response.Price);
+                $("#txtCategoryId").val(response.CategoryId);
+                $("#txtManufacturer").val(response.Manufacturer);
+                isupdate = true;
+
+                $("#statusMessage").html('Call is successful');
+            }).fail(function(error){
+                $("#statusMessage").html(`Call Failed ${error}`);
+                console.log(url);
+            });
+        }
+        function save(id){
+            /* Read data from the input elements */
+            var category = {
+                "ProductId": $("#txtProductId").val(),
+                "ProductName": $("#txtProductName").val(),
+                "Description":  $("#txtDescription").val(),
+                "Price":  $("#txtprice").val(),
+                "CategoryId":  $("#txtCategoryId").val(),
+                "Manufacturer": $("#txtManufacturer").val()
+            };
+
+           $.ajax({
+                url:`${url}/${id ? id : ''}`,
+                method: id ? "PUT" : "POST",
+                data: JSON.stringify(category), /*JSON data that is posted */
+                contentType: 'application/json'
+            }).done(function(response){
+                $("#statusMessage").html('Category creation is successful');
+                loadData();
+            }).fail(function(error){
+                $("#statusMessage").html(`Call Failed ${error}`);
+            });
+        }
+        function remove(id){
+           $.ajax({
+                url:`${url}/${$("#txtProductUniqueId").val()}`, /* Passing the CategoryId as URL Parameter */
+                method: "DELETE"
+            }).done(function(response){
+                $("#statusMessage").html('Category is deleted successfully');
+                loadData();
+            }).fail(function(error){
+                $("#statusMessage").html(`Call Failed ${error}`);
+            });
+        }
+    </script>
+     <style>
+        body {
+            background-color: azure;
+        }
+        h1 {
+            text-align: center;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-weight: bold;
+            color: chocolate;
+        }
+        .save-update{
+            padding-top: 10px;
+        }
+     </style>
+</head>
+<body>
+    <hr>
+    <div class="container">
+        <div class="container">
+            <div class="form-group">
+                <label>ProductUniqueId</label>
+                <input type="text" id="txtProductUniqueId" class="form-control" placeholder="enter ProductUniqueId id">
+            </div>
+            <div class="form-group">
+                <label>Product Id</label>
+                <input type="text" id="txtProductId" class="form-control" placeholder="enter Product id">
+            </div>
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" id="txtProductName" class="form-control" placeholder="enter Product name">
+            </div>
+            <div class="form-group">
+                <label>	Description </label>
+                <input type="text" id="txtDescription" class="form-control" placeholder="enter Description name">
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input type="text" id="txtprice" class="form-control" placeholder="enter price">
+            </div>
+            <div class="form-group">
+                <label>Category Id</label>
+                <input type="text" id="txtCategoryId" class="form-control" placeholder="enter Category id">
+            </div>
+            <div class="form-group">
+                <label>Manufacturer </label>
+                <input type="text" id="txtManufacturer" class="form-control" placeholder="enter Manufacturer ">
+            </div>
+            <!-- <div class="form-group">
+                <label>You want to Delete Later </label>
+                <input type="radio" id="canDelete" value="true" name="canDelete">
+            </div> -->
+            <div class="btn-group-lg save-update">
+                <button id="btn-save-update" class="btn btn-success">Save/Update</button>
+            </div>
+        </div>
+        <br/>
+        <div class="container alert alert-success">
+            <strong>
+                <p id="statusMessage"></p>
+            </strong>
+        </div>
+        <hr/>
+        <h1>Here is my table Generated Dynamically</h1>
+        <div class="container" id="dvTable"></div>
+    </div>
+</body>
+</html>
