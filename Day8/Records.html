@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment-8</title>
+    <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="./../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./table.js"></script>
+    <script src="./Data.js"></script>
+    <script>
+        var loadDataForTableObject = new loadDataForProduct();
+            function load() {
+                loadDataForTableObject.loadDataOfProduct()
+                        .then(function(response){
+                            var canDelete = true;
+                            var table = generateTable(response,canDelete);
+                            $("#dvTable2").html(table);
+                             $("#statusMessage1").html('Call is successful');
+                         })
+                         .catch(function(err){
+                            $("#statusMessage1").html('Call is failed');
+                         });
+                         loadDataForTableObject.loadDataOfCategory()
+                        .then(function(response){
+                                var canDelete = true;
+                                var table = generateTable(response,canDelete);
+                                $("#dvTable1").html(table);
+                                $("#statusMessage2").html('Call is successful');
+                            })
+                            .catch(function(err){
+                                $("#statusMessage2").html('Call is failed');
+                            });
+            }
+        $(document).ready(function(){
+            load();
+              // events for Product table
+            $("#txtProductUniqueId").on('change',function(){
+                loadDataForTableObject.loadDataById($(this).val())
+                    .then(function(response){
+                    $("#txtProductUniqueId").val(response.ProductUniqueId);
+                    $("#txtProductId").val(response.ProductId);
+                    $("#txtProductName").val(response.ProductName);
+                    $("#txtDescription").val(response.Description);
+                    $("#txtprice").val(response.Price);
+                    $("#txtCategoryId").val(response.CategoryId);
+                    $("#txtManufacturer").val(response.Manufacturer); 
+                    })
+                    .catch(function(err){
+                        $("#statusMessage1").html('Call is failed');
+                    });
+            });
+            $("#btn-saves").on('click', function(){
+                var category= {
+                "ProductId": $("#txtProductId").val(),
+                "ProductName": $("#txtProductName").val(),
+                "Description":  $("#txtDescription").val(),
+                "Price":  $("#txtprice").val(),
+                "CategoryId":  $("#txtCategoryId").val(),
+                "Manufacturer": $("#txtManufacturer").val()
+                }
+                loadDataForTableObject.saveData(category)
+                        .then(function(response){
+                            $("#txtProductUniqueId").val(response.ProductUniqueId);
+                            $("#statusMessage1").html('Call is successful');
+                            load();
+                        })
+                        .catch(function(err){
+                            $("#statusMessage1").html('Call is failed');
+                        });
+            });
+            $("#btn-update").on('click', function(){
+                var category= {
+                "ProductUniqueId" : $("#txtProductUniqueId").val(),
+                "ProductId": $("#txtProductId").val(),
+                "ProductName": $("#txtProductName").val(),
+                "Description":  $("#txtDescription").val(),
+                "Price":  $("#txtprice").val(),
+                "CategoryId":  $("#txtCategoryId").val(),
+                "Manufacturer": $("#txtManufacturer").val()
+                    }
+                 loadDataForTableObject.updateData(category.ProductUniqueId, category)
+                         .then(function(response){
+                             $("#statusMessage1").html('Update is successful');
+                             load();
+                         })
+                         .catch(function(response){
+                             $("#statusMessage1").html('Call is failed');
+                         });
+            });
+            $("#btn-delete").on('click', function(){
+                loadDataForTableObject.deleteData(parseInt($("#txtProductUniqueId").val()))
+                           .then(function(response){
+                                if(response){
+                                    $("#statusMessage1").html('delete is successful');
+                                    load();
+                                } else {
+                                    $("#statusMessage1").html('delete is failed');
+                                }
+                           })
+                           .catch(function(err){
+                               $("#statusMessage1").html('Call is failed');
+                           }); 
+            });
+            // events for Category table
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="form-group">
+            <label>CategoryId</label>
+            <input type="text" id="txtCategoryId" class="form-control" placeholder="enter CategoryId ">
+        </div>
+        <div class="form-group">
+            <label>CategoryName</label>
+            <input type="text" id="txtCategoryName" class="form-control" placeholder="enter CategoryName ">
+        </div>
+        <div class="form-group">
+            <label>BasePrice</label>
+            <input type="text" id="txtBasePrice" class="form-control" placeholder="enter BasePrice">
+        </div>
+    </div>
+    <div class="container">
+        <div class="btn-group-lg">
+            <button id="btnsave" class="btn btn-success">Save</button>
+            <button id="btnupdate" class="btn btn-warning">Update</button>
+            <button id="btndelete" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+    <hr>
+    <div class="container alert alert-success">
+        <strong>
+            <p id="statusMessage2"></p>
+        </strong>
+    </div>
+    <div class="container">
+        <h1>Here is my Category table Generated Dynamically</h1>
+        <div class="container" id="dvTable1"></div>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="container">
+            <div class="form-group">
+                <label>ProductUniqueId</label>
+                <input type="text" id="txtProductUniqueId" class="form-control" placeholder="enter ProductUniqueId id">
+            </div>
+            <div class="form-group">
+                <label>Product Id</label>
+                <input type="text" id="txtProductId" class="form-control" placeholder="enter Product id">
+            </div>
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" id="txtProductName" class="form-control" placeholder="enter Product name">
+            </div>
+            <div class="form-group">
+                <label>	Description </label>
+                <input type="text" id="txtDescription" class="form-control" placeholder="enter Description name">
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input type="text" id="txtprice" class="form-control" placeholder="enter price">
+            </div>
+            <div class="form-group">
+                <label>Category Id</label>
+                <input type="text" id="txtCategoryId" class="form-control" placeholder="enter Category id">
+            </div>
+            <div class="form-group">
+                <label>Manufacturer </label>
+                <input type="text" id="txtManufacturer" class="form-control" placeholder="enter Manufacturer ">
+            </div>
+            <!-- <div class="form-group">
+                <label>You want to Delete Later </label>
+                <input type="radio" id="canDelete" value="true" name="canDelete">
+            </div> -->
+            <div class="btn-group-lg save-update">
+                <button id="btn-saves" class="btn btn-success">Save</button>
+                <button id="btn-update" class="btn btn-success">Update</button>
+                <button id="btn-delete" class="btn btn-danger">delete</button>
+            </div>
+        </div>
+        <br/>
+        <div class="container alert alert-success">
+            <strong>
+                <p id="statusMessage1"></p>
+            </strong>
+        </div>
+        <hr/>
+    </div>
+    <div class="container">
+        <h1>Here is my  Product table Generated Dynamically</h1>
+        <div class="container" id="dvTable2"></div>
+    </div>
+</body>
+</html>
