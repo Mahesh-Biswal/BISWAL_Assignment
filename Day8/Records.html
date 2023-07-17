@@ -70,7 +70,7 @@
                 categoriesData.forEach((cat, idx) => {
                     catIds.push(cat.CategoryId);
                 });
-
+                var invalidPrice = parseInt($("#txtBasePrice").val()) < 0 ? true : false;
                 if (catIds.includes(parseInt($("#txtCatId").val())) || invalidPrice === true || CategoryName == "") {
                     var invalidPrice = parseInt($("#txtBasePrice").val()) < 0 ? true : false;
                     // $('#categoryError').toggle();
@@ -231,6 +231,7 @@
                     description === "" ? $("#show-alert-description").html("please fill the manatory feild") : $("#show-alert-description").html("");
                     manufacturer === "" ? $("#show-alert-manufacturer").html("please fill the manatory feild") : $("#show-alert-manufacturer").html("");
                 } else {
+                    document.getElementById('productError').textContent = '';
                 serviceProdObject.updateData(prd.ProductUniqueId, prd)
                     .then(function (resp) {
 
