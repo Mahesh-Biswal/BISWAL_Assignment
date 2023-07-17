@@ -1,195 +1,517 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment-8</title>
-    <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <script src="./../node_modules/jquery/dist/jquery.min.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+  crossorigin="anonymous"></script>
     <script src="./table.js"></script>
     <script src="./Data.js"></script>
     <script>
-        var loadDataForTableObject = new loadDataForProduct();
-            function load() {
-                loadDataForTableObject.loadDataOfProduct()
-                        .then(function(response){
-                            var canDelete = true;
-                            var table = generateTable(response,canDelete);
-                            $("#dvTable2").html(table);
-                             $("#statusMessage1").html('Call is successful');
-                         })
-                         .catch(function(err){
-                            $("#statusMessage1").html('Call is failed');
-                         });
-                         loadDataForTableObject.loadDataOfCategory()
-                        .then(function(response){
-                                var canDelete = true;
-                                var table = generateTable(response,canDelete);
-                                $("#dvTable1").html(table);
-                                $("#statusMessage2").html('Call is successful');
-                            })
-                            .catch(function(err){
-                                $("#statusMessage2").html('Call is failed');
-                            });
-            }
-        $(document).ready(function(){
-            load();
-              // events for Product table
-            $("#txtProductUniqueId").on('change',function(){
-                loadDataForTableObject.loadDataById($(this).val())
-                    .then(function(response){
-                    $("#txtProductUniqueId").val(response.ProductUniqueId);
-                    $("#txtProductId").val(response.ProductId);
-                    $("#txtProductName").val(response.ProductName);
-                    $("#txtDescription").val(response.Description);
-                    $("#txtprice").val(response.Price);
-                    $("#txtCategoryId").val(response.CategoryId);
-                    $("#txtManufacturer").val(response.Manufacturer); 
+        var categoriesData = []; // Initialize an empty array to store Category Table data
+
+        var productsData = []; // Initialize an empty array to store Products Table data
+        var serviceCatObject = new serviceCat();
+        function loadCat() {
+            serviceCatObject.loadData('cat')
+                .then(function (resp) {
+                    categoriesData = resp;
+                    var table = generateCatTable(resp);
+                    var options = [];
+                    categoriesData.forEach((cat, idx) => {
+                        options.push(cat.CategoryId);
+                    });
+
+                    var selectElement = document.getElementById("prodtxtcatid");
+                    options.forEach(function (option) {
+                        var optionElement = document.createElement("option");
+                        optionElement.textContent = option;
+                        selectElement.appendChild(optionElement);
+                    });
+                    $("#table-cat-div").html(table);
+                    $("#statusMessage").html('Call is successful');
+                })
+                .catch(function (err) {
+                    $("#statusMessage").html('Call is failed');
+                });
+        }
+
+        var serviceProdObject = new serviceProd();
+        function loadProd() {
+            serviceProdObject.loadData('prod')
+                .then(function (resp) {
+                    productsData = resp;
+                    var table = generateProdTable(resp);
+                    $("#table-prod-div").html(table);
+                    $("#statusProdMessage").html('Call is successful');
+                })
+                .catch(function (err) {
+                    $("#statusProdMessage").html('Call is failed');
+                });
+        }
+        $(document).ready(function () {
+
+            loadCat();
+
+            $("#btnsave").on('click', function () {
+                var CategoryName = document.getElementById("txtCatId").value;
+
+                /* for Category*/
+                var cat = {
+                    "CategoryId": $("#txtCatId").val(),
+                    "CategoryName": $("#txtCatName").val(),
+                    "BasePrice": $("#txtBasePrice").val(),
+                }
+                
+                var catIds = [];
+                categoriesData.forEach((cat, idx) => {
+                    catIds.push(cat.CategoryId);
+                });
+
+                if (catIds.includes(parseInt($("#txtCatId").val())) || invalidPrice === true || CategoryName == "") {
+                    var invalidPrice = parseInt($("#txtBasePrice").val()) < 0 ? true : false;
+                    // $('#categoryError').toggle();
+                    catIds.includes(parseInt($("#txtCatId").val())) ? document.getElementById('categoryError').textContent = "Category with this Id already exists!!" : document.getElementById('categoryError').textContent = '';
+                    // $('#catPriceError').toggle();
+                    invalidPrice ? document.getElementById('catPriceError').textContent = "Price should not be negative !!" : document.getElementById('catPriceError').textContent = '';
+                    CategoryName == "" ? $("#alert-span-catName").html("please fill the manatory feild") : $("#alert-span-catName").html('');
+                } else {
+                    serviceCatObject.saveData(cat)
+                        .then(function (resp) {
+                            $("#txtCatId").val(resp.CategoryId);
+                            $("#statusMessage").html('Call is successful');
+                            loadCat();
+                            document.getElementById('categoryError').textContent = '';
+                            document.getElementById('catPriceError').textContent = '';
+                            $("#alert-span-catName").html('');
+                        })
+                        .catch(function (err) {
+                            $("#statusMessage").html('Call is failed');
+                        });
+                }
+                // }
+            });
+
+            /*Update */
+            $("#btnupdate").on('click', function () {
+                $('#categoryError').toggle();
+                var cat = {
+                    "CategoryId": $("#txtCatId").val(),
+                    "CategoryName": $("#txtCatName").val(),
+                    "BasePrice": $("#txtBasePrice").val(),
+                }
+                var invalidPrice = parseInt($("#txtBasePrice").val()) < 0 ? true : false;
+                if (invalidPrice) {
+                    invalidPrice ? document.getElementById('catPriceError').textContent = "Price should not be negative !!" : document.getElementById('catPriceError').textContent = '';
+                }else{
+                    serviceCatObject.updateData(cat.CategoryId, cat)
+                    .then(function (resp) {
+
+                        $("#statusMessage").html('Update is successful');
+                        loadCat();
+                            document.getElementById('categoryError').textContent = '';
+                            document.getElementById('catPriceError').textContent = '';
+                            $("#alert-span-catName").html('');
                     })
-                    .catch(function(err){
-                        $("#statusMessage1").html('Call is failed');
+                    .catch(function (err) {
+                        $("#statusMessage").html('Call is failed');
+                    });
+                }
+
+            });
+
+            /*Delete*/
+            $("#btndelete").on('click', function () {
+                $('#categoryError').toggle();
+                serviceCatObject.deleteData(parseInt($("#txtCatId").val()))
+                    .then(function (resp) {
+                        if (resp) {
+                            $("#statusMessage").html('delete is successful');
+                            loadCat();
+                        } else {
+                            $("#statusMessage").html('delete is failed');
+                        }
+                    })
+                    .catch(function (err) {
+                        $("#statusMessage").html('Call is failed');
                     });
             });
-            $("#btn-saves").on('click', function(){
-                var category= {
-                "ProductId": $("#txtProductId").val(),
-                "ProductName": $("#txtProductName").val(),
-                "Description":  $("#txtDescription").val(),
-                "Price":  $("#txtprice").val(),
-                "CategoryId":  $("#txtCategoryId").val(),
-                "Manufacturer": $("#txtManufacturer").val()
+
+            /* load by Id*/
+            $("#txtCatId").on('change', function () {
+
+                serviceCatObject.loadDataById($(this).val())
+                    .then(function (resp) {
+                        $("#txtCatId").val(resp.CategoryId);
+                        $("#txtCatName").val(resp.CategoryName);
+                        $("#txtBasePrice").val(resp.BasePrice);
+
+                    })
+                    .catch(function (err) {
+                        $("#statusMessage").html('Call is failed');
+                    });
+            });
+            ////////////////////////////////////////////////////////////////////////////////////////////////
+
+            loadProd();
+            /* Products*/
+            $("#prodbtnsave").on('click', function () {
+                var prodName = document.getElementById("txtprodname").value;
+                var description = document.getElementById("txtdescription").value;
+                var manufacturer = document.getElementById("txtmanufacturer").value;
+
+
+                var prd = {
+                    "ProductId": $("#txtprodid").val(),
+                    "ProductName": $("#txtprodname").val(),
+                    "Description": $("#txtdescription").val(),
+                    "Price": $("#txtprice").val(),
+                    "CategoryId": $("#prodtxtcatid").val(),
+                    "Manufacturer": $("#txtmanufacturer").val()
                 }
-                loadDataForTableObject.saveData(category)
-                        .then(function(response){
-                            $("#txtProductUniqueId").val(response.ProductUniqueId);
-                            $("#statusMessage1").html('Call is successful');
-                            load();
+
+                var prodIds = [];
+                productsData.forEach((prod, idx) => {
+                    prodIds.push(prod.ProductId);
+                });
+                var invalidPrice = parseInt($("#txtprice").val()) < 0 ? true : false;
+
+                if (prodIds.includes($("#txtprodid").val()) || invalidPrice || (prodName === "" || description === "" || manufacturer === "")) {
+                    // $('#productError').toggle();
+                    prodIds.includes($("#txtprodid").val()) ? document.getElementById('productError').textContent = "Product with this Id already exists!!" : document.getElementById('productError').textContent = '';
+                    invalidPrice ? document.getElementById('prodPriceError').textContent = "Price should not be negative !!" : document.getElementById('prodPriceError').textContent = '';
+                    prodName === "" ? $("#show-alert").html("please fill the manatory feild") : $("#show-alert").html("");
+                    description === "" ? $("#show-alert-description").html("please fill the manatory feild") : $("#show-alert-description").html("");
+                    manufacturer === "" ? $("#show-alert-manufacturer").html("please fill the manatory feild") : $("#show-alert-manufacturer").html("");
+                } else {
+                    serviceProdObject.saveData(prd)
+                        .then(function (resp) {
+                            $("#txtproduniqueid").val(resp.ProductUniqueId);
+                            $("#statusProdMessage").html('Call is successful');
+                            loadProd();
+                            document.getElementById('productError').textContent = '';
+                            document.getElementById('prodPriceError').textContent = '';
+                            $("#show-alert").html("");
+                            $("#show-alert-description").html("");
+                            $("#show-alert-manufacturer").html("");
                         })
-                        .catch(function(err){
-                            $("#statusMessage1").html('Call is failed');
+                        .catch(function (err) {
+                            $("#statusProdMessage").html('Call is failed');
                         });
+                }
+
             });
-            $("#btn-update").on('click', function(){
-                var category= {
-                "ProductUniqueId" : $("#txtProductUniqueId").val(),
-                "ProductId": $("#txtProductId").val(),
-                "ProductName": $("#txtProductName").val(),
-                "Description":  $("#txtDescription").val(),
-                "Price":  $("#txtprice").val(),
-                "CategoryId":  $("#txtCategoryId").val(),
-                "Manufacturer": $("#txtManufacturer").val()
-                    }
-                 loadDataForTableObject.updateData(category.ProductUniqueId, category)
-                         .then(function(response){
-                             $("#statusMessage1").html('Update is successful');
-                             load();
-                         })
-                         .catch(function(response){
-                             $("#statusMessage1").html('Call is failed');
-                         });
+            $("#prodbtnupdate").on('click', function () {
+                $('#productError').toggle();
+                var prodName = document.getElementById("txtprodname").value;
+                var description = document.getElementById("txtdescription").value;
+                var manufacturer = document.getElementById("txtmanufacturer").value;
+                var prd = {
+                    "ProductUniqueId": $("#txtproduniqueid").val(),
+                    "ProductId": $("#txtprodid").val(),
+                    "ProductName": $("#txtprodname").val(),
+                    "Description": $("#txtdescription").val(),
+                    "Price": $("#txtprice").val(),
+                    "CategoryId": $("#prodtxtcatid").val(),
+                    "Manufacturer": $("#txtmanufacturer").val()
+                }
+                var prodIds = [];
+                productsData.forEach((prod, idx) => {
+                    prodIds.push(prod.ProductId);
+                });
+                var invalidPrice = parseInt($("#txtprice").val()) < 0 ? true : false;
+
+                if (prodIds.includes($("#txtprodid").val()) || invalidPrice || (prodName === "" || description === "" || manufacturer === "")) {
+                    // $('#productError').toggle();
+                    invalidPrice ? document.getElementById('prodPriceError').textContent = "Price should not be negative !!" : document.getElementById('prodPriceError').textContent = '';
+                    prodName === "" ? $("#show-alert").html("please fill the manatory feild") : $("#show-alert").html("");
+                    description === "" ? $("#show-alert-description").html("please fill the manatory feild") : $("#show-alert-description").html("");
+                    manufacturer === "" ? $("#show-alert-manufacturer").html("please fill the manatory feild") : $("#show-alert-manufacturer").html("");
+                } else {
+                serviceProdObject.updateData(prd.ProductUniqueId, prd)
+                    .then(function (resp) {
+
+                        $("#statusProdMessage").html('Update is successful');
+                        loadProd();
+                            document.getElementById('productError').textContent = '';
+                            document.getElementById('prodPriceError').textContent = '';
+                            $("#show-alert").html("");
+                            $("#show-alert-description").html("");
+                            $("#show-alert-manufacturer").html("");
+                    })
+                    .catch(function (err) {
+                        $("#statusProdMessage").html('Call is failed');
+                    });
+                }
             });
-            $("#btn-delete").on('click', function(){
-                loadDataForTableObject.deleteData(parseInt($("#txtProductUniqueId").val()))
-                           .then(function(response){
-                                if(response){
-                                    $("#statusMessage1").html('delete is successful');
-                                    load();
-                                } else {
-                                    $("#statusMessage1").html('delete is failed');
-                                }
-                           })
-                           .catch(function(err){
-                               $("#statusMessage1").html('Call is failed');
-                           }); 
+
+            /*Delete*/
+            $("#prodbtndelete").on('click', function () {
+                $('#productError').toggle();
+                serviceProdObject.deleteData(parseInt($("#txtproduniqueid").val()))
+                    .then(function (resp) {
+                        if (resp) {
+                            $("#statusProdMessage").html('delete is successful');
+                            loadProd();
+                        } else {
+                            $("#statusProdMessage").html('delete is failed');
+                        }
+                    })
+                    .catch(function (err) {
+                        $("#statusProdMessage").html('Call is failed');
+                    });
             });
-            // events for Category table
+
+            $("#txtproduniqueid").on('change', function () {
+
+                serviceProdObject.loadDataById($(this).val())
+                    .then(function (resp) {
+                        $("#txtproduniqueid").val(resp.ProductUniqueId);
+                        $("#txtprodid").val(resp.ProductId);
+                        $("#txtprodname").val(resp.ProductName);
+                        $("#txtdescription").val(resp.Description);
+                        $("#txtprice").val(resp.Price);
+                        $("#prodtxtcatid").val(resp.CategoryId);
+                        $("#txtmanufacturer").val(resp.Manufacturer);
+                    })
+                    .catch(function (err) {
+                        $("#statusProdMessage").html('Call is failed');
+                    });
+            });
+
+
+            // Similar event listeners for the catagory  Table
+
+            $("#table-cat-div").on('click', '.sort-button', function () {
+                var column = $(this).data('column'); // Retrieve the clicked column
+                categoriesData.sort((a, b) => (a[column] > b[column] ? 1 : -1)); // Sort the Category Table data by the clicked column
+                var table = generateCatTable(categoriesData); // Generate the sorted Category Table
+                $("#table-cat-div").html(table); // Display the sorted Category Table
+            });
+
+            $("#table-cat-div").on('click', '.reverse-button', function () {
+                var column = $(this).data('column'); // Retrieve the clicked column
+                categoriesData.reverse(); // Reverse the Category Table data
+                var table = generateCatTable(categoriesData); // Generate the reversed Category Table
+                $("#table-cat-div").html(table); // Display the reversed Category Table
+            });
+
+            // Similar event listeners for the Products Table
+
+            $("#table-prod-div").on('click', '.sort-button', function () {
+                var column = $(this).data('column');
+                productsData.sort((a, b) => (a[column] > b[column] ? 1 : -1));
+                var table = generateProdTable(productsData);
+                $("#table-prod-div").html(table);
+            });
+
+
+            $("#table-prod-div").on('click', '.reverse-button', function () {
+                var column = $(this).data('column');
+                productsData.reverse();
+                var table = generateProdTable(productsData);
+                $("#table-prod-div").html(table);
+            });
+
+
+
+            // Disable the buttons by default
+
+            $("#btnsave, #prodbtnsave").prop("disabled", true);
+
+            $("#btnupdate, #prodbtnupdate").prop("disabled", true);
+
+           
+
+            $(".buttom-disable-category").on("change", function () {
+                $("#btnsave").prop("disabled", false);
+                $("#btnupdate").prop("disabled", false);
+            });
+
+            $(".buttom-disable-product").on("change", function () {
+                $("#prodbtnsave").prop("disabled", false);
+                $("#prodbtnupdate").prop("disabled", false);
+            });
+
+
         });
+
+
+        $(document).on('click', '.cat-div', function () {
+            var rowData = [];
+            var row = $(this).closest('tr');
+            row.find('td').each(function () {
+                rowData.push($(this).text());
+            });
+
+            productsbyCat(rowData[0]);
+
+        });
+
+        function productsbyCat(searchValue) {
+            $('#myTable tbody tr').each(function () {
+                var row = $(this);
+                var match = false;
+
+                row.find('td').each(function () {
+                    var rowData = [];
+                    var roww = $(this).closest('tr');
+                    roww.find('td').each(function () {
+                        rowData.push($(this).text());
+                    });
+                    if ($(this).text().toLowerCase().indexOf(searchValue) !== -1 && rowData[5] === searchValue) {
+                        match = true;
+                        return false;
+                    }
+                });
+
+                if (match) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+
+
+        }
+
     </script>
+
+
+    <style>
+        .sort-button {
+            font-size: x-small;
+            width: 20px;
+            padding: 3px;
+            margin: 5px;
+        }
+
+        .reverse-button {
+            font-size: x-small;
+            width: 20px;
+            padding: 3px;
+            margin: 5px;
+        }
+
+        .error-message {
+            color: red;
+
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="form-group">
-            <label>CategoryId</label>
-            <input type="text" id="txtCategoryId" class="form-control" placeholder="enter CategoryId ">
-        </div>
-        <div class="form-group">
-            <label>CategoryName</label>
-            <input type="text" id="txtCategoryName" class="form-control" placeholder="enter CategoryName ">
-        </div>
-        <div class="form-group">
-            <label>BasePrice</label>
-            <input type="text" id="txtBasePrice" class="form-control" placeholder="enter BasePrice">
-        </div>
-    </div>
-    <div class="container">
-        <div class="btn-group-lg">
-            <button id="btnsave" class="btn btn-success">Save</button>
-            <button id="btnupdate" class="btn btn-warning">Update</button>
-            <button id="btndelete" class="btn btn-danger">Delete</button>
-        </div>
-    </div>
-    <hr>
-    <div class="container alert alert-success">
-        <strong>
-            <p id="statusMessage2"></p>
-        </strong>
-    </div>
-    <div class="container">
-        <h1>Here is my Category table Generated Dynamically</h1>
-        <div class="container" id="dvTable1"></div>
-    </div>
-    <hr>
-    <div class="container">
-        <div class="container">
-            <div class="form-group">
-                <label>ProductUniqueId</label>
-                <input type="text" id="txtProductUniqueId" class="form-control" placeholder="enter ProductUniqueId id">
+        <h1 class="text-center">Categories</h1>
+        <div class="container m-3" style="background-color:rgb(238, 230, 227);">
+            <div class="container">
+
+                <div class="form-group">
+                    <label>CategoryId</label>
+                    <input type="text" id="txtCatId" class="form-control buttom-disable-category"
+                        placeholder="enter CategoryId ">
+                    <span id="categoryError" class="error-message"></span>
+                    <span id="alert-span-catName" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label>CategoryName</label>
+                    <input type="text" id="txtCatName" class="form-control buttom-disable-category"
+                        placeholder="enter CategoryName ">
+                </div>
+                <div class="form-group">
+                    <label>BasePrice</label>
+                    <input type="text" id="txtBasePrice" class="form-control buttom-disable-category"
+                        placeholder="enter BasePrice">
+                    <span id="catPriceError" class="error-message"></span>
+                </div>
+
             </div>
-            <div class="form-group">
-                <label>Product Id</label>
-                <input type="text" id="txtProductId" class="form-control" placeholder="enter Product id">
-            </div>
-            <div class="form-group">
-                <label>Product Name</label>
-                <input type="text" id="txtProductName" class="form-control" placeholder="enter Product name">
-            </div>
-            <div class="form-group">
-                <label>	Description </label>
-                <input type="text" id="txtDescription" class="form-control" placeholder="enter Description name">
-            </div>
-            <div class="form-group">
-                <label>Price</label>
-                <input type="text" id="txtprice" class="form-control" placeholder="enter price">
-            </div>
-            <div class="form-group">
-                <label>Category Id</label>
-                <input type="text" id="txtCategoryId" class="form-control" placeholder="enter Category id">
-            </div>
-            <div class="form-group">
-                <label>Manufacturer </label>
-                <input type="text" id="txtManufacturer" class="form-control" placeholder="enter Manufacturer ">
-            </div>
-            <!-- <div class="form-group">
-                <label>You want to Delete Later </label>
-                <input type="radio" id="canDelete" value="true" name="canDelete">
-            </div> -->
-            <div class="btn-group-lg save-update">
-                <button id="btn-saves" class="btn btn-success">Save</button>
-                <button id="btn-update" class="btn btn-success">Update</button>
-                <button id="btn-delete" class="btn btn-danger">delete</button>
+            <div class="btn-group-lg text-center">
+                <button id="btnsave" class="btn btn-success p-1 m-2">Save</button>
+                <button id="btnupdate" class="btn btn-warning">Update</button>
+                <button id="btndelete" class="btn btn-danger p-1">Delete</button>
             </div>
         </div>
-        <br/>
-        <div class="container alert alert-success">
+        <br />
+        <div class="container p-1 alert alert-success">
             <strong>
-                <p id="statusMessage1"></p>
+                <p id="statusMessage"></p>
             </strong>
         </div>
-        <hr/>
+        <hr />
+        <div class="container">
+            <h1 class="text-center m-3 p-3">Category Table</h1>
+            <div class="p-3 m-3" id="table-cat-div"></div>
+        </div>
+
     </div>
+    <hr>
     <div class="container">
-        <h1>Here is my  Product table Generated Dynamically</h1>
-        <div class="container" id="dvTable2"></div>
+        <h1 class="text-center">Products</h1>
+        <div class="container" style="background-color:rgb(238, 230, 227);">
+            <div class="group-group">
+                <label>ProductUniqueId :</label>
+                <input type="text" id="txtproduniqueid" class="form-control buttom-disable-product"
+                    placeholder="enter ProductUniqueId">
+            </div>
+            <div class="group-group">
+                <label>ProductId :</label>
+                <input type="text" id="txtprodid" class="form-control buttom-disable-product"
+                    placeholder="enter ProductId">
+                <span id="productError" class="error-message"></span>
+            </div>
+            <div class="group-group">
+                <label>ProductName :</label>
+                <input type="text" id="txtprodname" class="form-control buttom-disable-product"
+                    placeholder="enter ProductName">
+                <span id="show-alert" class="error-message"></span>
+            </div>
+            <div class="group-group">
+                <label>Description :</label>
+                <input type="text" id="txtdescription" class="form-control buttom-disable-product"
+                    placeholder="enter Description">
+                <span id="show-alert-description" class="error-message"></span>
+            </div>
+            <div class="group-group">
+                <label>Price :</label>
+                <input type="text" id="txtprice" class="form-control buttom-disable-product" placeholder="enter Price">
+                <span id="prodPriceError" class="error-message"></span>
+            </div>
+            <div class="group-group" id="select-div">
+                <label>Select Category ID from drop down</label>
+                <!-- <input type="text" id="prodtxtcatid" class="form-control" placeholder="enter CategoryId"> -->
+                <select id="prodtxtcatid" class="form-select"></select>
+            </div>
+            <div class="group-group">
+                <label>Manufacturer :</label>
+                <input type="text" id="txtmanufacturer" class="form-control buttom-disable-product"
+                    placeholder="enter Manufacturer">
+                <span id="show-alert-manufacturer" class="error-message"></span>
+            </div>
+
+            <div class="btn-group-lg text-center">
+
+                <button id="prodbtnsave" class="btn btn-success p-1 m-2">Save</button>
+                <button id="prodbtnupdate" class="btn btn-warning">Update</button>
+                <button id="prodbtndelete" class="btn btn-danger p-1">Delete</button>
+            </div>
+        </div>
+        <br>
+        <div class="container alert alert-success">
+            <strong>
+                <p id="statusProdMessage"></p>
+            </strong>
+        </div>
+        <hr>
+
+        <div class="container">
+            <h1 class="text-center m-3 p-3">Products Table</h1>
+            <div class="p-3 m-3" id="table-prod-div"></div>
+        </div>
     </div>
 </body>
+
 </html>

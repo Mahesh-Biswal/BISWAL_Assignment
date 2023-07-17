@@ -1,53 +1,116 @@
- 
-function generateTable(dataSource,canDelete) {
-    /* Chekc if the dataSource is not undefined or empty  
-    if yes then return message that no record*/
 
-    if(dataSource === undefined || dataSource.length === 0){
-        return `<div class="alert alerrt-danger">
+function generateCatTable(dataSource) {
+
+    if (dataSource === undefined || dataSource.length === 0) {
+      return `<div class="alert alerrt-danger">
+            <strong>
+               No Data Present
+            </strong>
+          </div> `;
+    }
+  
+    /* Read Schema from the 0th record from array */
+  
+    var properties = Object.keys(dataSource[0]);
+  
+    if (properties === undefined || properties.length === 0) {
+      return `<div class="alert alerrt-danger">
           <strong>
-             No Data Present
+            The dataSource is not in corrct shape
           </strong>
         </div> `;
     }
-
-    /* Read Schema from the 0th record from array */
-
-    var properties = Object.keys(dataSource[0]);
-
-    if(properties === undefined || properties.length === 0) {
-        return `<div class="alert alerrt-danger">
-        <strong>
-          The dataSource is not in corrct shape
-        </strong>
-      </div> `;
-    }
-
-    /* the table definition */
-
+  
     var table = `<table class="table table-bordered table-striped">`;
-    /* Defining Headrers */
-    table+=`<thead><tr>`;
-    properties.forEach((header,index)=>{
-        table+=`<th>${header}</th>`;
+    table += `<thead><tr>`;
+    properties.forEach((header, index) => {
+      table += `<th>${header}`;
+
+      table += `<button class="btn  btn-primary sort-button" data-column="${header}">▲</button>`;
+
+      table += `<button class="btn  btn-success reverse-button" data-column="${header}">▼</button>`;
+
+      table += `</th>`;
     });
-    table+=`</tr></thead>`;
-
-    /* Add Body */
-    table+=`<tbody>`;
-    /* row generation  for the table  */
-    dataSource.forEach((emp,idx)=>{
-        table+=`<tr>`;
-            /* Read value for each property of each row */
-            properties.forEach((header,index)=>{
-                /* Reading value of each property of each emp record in employees array */
-                table+=`<td>${emp[header]}</td>`;
-            });
-        table+=`</tr>`;
+    table += `</tr></thead>`;
+  
+    table += `<tbody>`;
+  
+    dataSource.forEach((prod, idx) => {
+      table += `<tr class="cat-div">`;
+  
+      properties.forEach((header, index) => {
+        table += `<td>${prod[header]}</td>`;
+      });
+  
+      // table += `<td> <button class="button-select bg-dark text-light in-row-btn" id="btn-select"> Select </button> </td>`;
+  
+      
+      table += `</tr>`;
     });
-
-    table+=`</tbody>`;
-
-    table+=`</table>`;
+  
+    table += `</tbody>`;
+  
+    table += `</table>`;
+  
     return table;
-}
+  
+  }
+
+  function generateProdTable(data) {
+
+    if (data === undefined || data.length === 0) {
+      return `<div class="alert alerrt-danger">
+            <strong>
+               No Data Present
+            </strong>
+          </div> `;
+    }
+  
+    /* Read Schema from the 0th record from array */
+  
+    var properties = Object.keys(data[0]);
+  
+    if (properties === undefined || properties.length === 0) {
+      return `<div class="alert alerrt-danger">
+          <strong>
+            The data is not in corrct shape
+          </strong>
+        </div> `;
+    }
+  
+    var table = `<table class="table table-bordered table-striped" id="myTable">`;
+    table += `<thead><tr>`;
+    properties.forEach((header, index) => {
+      table += `<th>${header}`;
+
+      table += `<button class="btn  btn-primary sort-button" data-column="${header}">▲</button>`;
+
+      table += `<button class="btn  btn-success reverse-button" data-column="${header}">▼</button>`;
+
+      table += `</th>`;
+    });
+    table += `</tr></thead>`;
+  
+    table += `<tbody>`;
+  
+    data.forEach((prod, idx) => {
+      table += `<tr class="prod-div" >`;
+  
+      properties.forEach((header, index) => {
+        table += `<td>${prod[header]}</td>`;
+      });
+  
+      // table += `<td> <button class="button-select bg-dark text-light in-row-btn" id="btn-select"> Select </button> </td>`;
+  
+      
+      table += `</tr>`;
+    });
+  
+    table += `</tbody>`;
+  
+    table += `</table>`;
+  
+    return table;
+  
+  }
