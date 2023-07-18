@@ -62,7 +62,7 @@ const serverPath = fileURLToPath(
     import.meta.url);
 
 instance.use(
-    express.static(path.join(serverPath, './../getData&PostData/server.js'))
+    express.static(path.join(serverPath, './../'))
 );
 
 // define routing for various HTML pages from 'views' folder
