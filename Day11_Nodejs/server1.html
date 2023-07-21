@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Search</title>
+  <!-- Add Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Employee Search</h2>
+    <label for="take">Records per Page:</label>
+    <input type="number" id="take" value="10">
+    <label for="skip">Records to Skip:</label>
+    <input type="number" id="skip" value="0">
+    <button id="searchBtn" class="btn btn-primary">Search</button>
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>DeptNo</th>
+          <th>DeptName</th>
+          <th>Location</th>
+          <th>Capacity</th>
+          <!-- Add other relevant columns here -->
+        </tr>
+      </thead>
+      <tbody id="departmentTableBody"></tbody>
+    </table>
+    <nav>
+      <ul class="pagination" id="pagination"></ul>
+    </nav>
+  </div>
+
+  <!-- Add Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // Function to fetch and display data
+    function getData(take, skip) {
+      $.ajax({
+        url: `http://localhost:3060/api/search/${take}/${skip}`,
+        method: 'GET',
+        success: function(data) {
+          const tableBody = $('#departmentTableBody');
+          tableBody.empty();
+
+          if (Array.isArray(data.data)) {
+            data.data.forEach(department => {
+              tableBody.append(`<tr>
+                <td>${department.DeptNo}</td>
+                <td>${department.DeptName}</td>
+                <td>${department.Location}</td>
+                <td>${department.Capacity}</td>
+                <!-- Add other relevant columns here -->
+              </tr>`);
+            });
+          } else {
+            console.error('Invalid data format received from the server:', data);
+            // Handle the error or display a message to the user
+          }
+
+          // Create pagination links
+          createPagination(data.paginationNumbers, skip / take + 1);
+        },
+        error: function() {
+          alert('Error fetching data from the server.');
+        }
+      });
+    }
+
+    // Function to create pagination links
+    function createPagination(totalPages, currentPage) {
+      const pagination = $('#pagination');
+      pagination.empty();
+      for (let i = 1; i <= totalPages; i++) {
+        const li = `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#">${i}</a></li>`;
+        pagination.append(li);
+      }
+
+      // Handle click events for pagination links
+      pagination.on('click', 'a', function(e) {
+        e.preventDefault();
+        const page = $(this).text();
+        const take = parseInt($('#take').val());
+        const skip = (page - 1) * take;
+        getData(take, skip);
+      });
+    }
+
+    // On page load, fetch data with default values
+    $(document).ready(function() {
+      const take = parseInt($('#take').val());
+      const skip = parseInt($('#skip').val());
+      getData(take, skip);
+    });
+
+    // Handle search button click
+    $('#searchBtn').on('click', function() {
+      const take = parseInt($('#take').val());
+      const skip = parseInt($('#skip').val());
+      getData(take, skip);
+    });
+  </script>
+
+</body>
+</html>
