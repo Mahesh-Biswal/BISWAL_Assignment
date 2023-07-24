@@ -59,7 +59,7 @@
             // Handle the error or display a message to the user
           }
 
-          // Create pagination links
+          // Create pagination links based on the updated 'take' value
           createPagination(data.paginationNumbers, skip / take + 1);
         },
         error: function() {
@@ -72,7 +72,13 @@
     function createPagination(totalPages, currentPage) {
       const pagination = $('#pagination');
       pagination.empty();
-      for (let i = 1; i <= totalPages; i++) {
+
+      // Calculate the total number of pages based on the updated 'take' value
+      const take = parseInt($('#take').val());
+      const totalRecords = totalPages.length * take;
+      const totalNumPages = Math.ceil(totalRecords / take);
+
+      for (let i = 1; i <= totalNumPages; i++) {
         const li = `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#">${i}</a></li>`;
         pagination.append(li);
       }
