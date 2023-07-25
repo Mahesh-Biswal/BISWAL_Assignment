@@ -6,15 +6,24 @@
   <!-- Add Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-
+<style>
+  body {
+    background-color: bisque;
+  }
+  h2{
+    text-align: center;
+    color: rgb(1, 24, 24);
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
+  }
+</style>
 <body>
   <div class="container mt-5">
     <h2>Employee Search</h2>
     <label for="take">Records per Page:</label>
-    <input type="number" id="take" value="10">
+    <input type="number" class="form-control" id="take" value="5">
     <label for="skip">Records to Skip:</label>
-    <input type="number" id="skip" value="0">
-    <button id="searchBtn" class="btn btn-primary">Search</button>
+    <input type="number" class="form-control" id="skip" value="0">
+    <button id="searchBtn" class="btn btn-primary btn-lg mt-2">Search</button>
     <table class="table mt-3">
       <thead>
         <tr>

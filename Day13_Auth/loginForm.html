@@ -4,23 +4,40 @@
 <head>
     <title>Login and Secured Data</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
-
+<style>
+    body {
+        background-color: yellow;
+    }
+    h2{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: rgb(7, 251, 251);
+        text-align: center;
+    }
+    #loginDiv {
+        text-align: center;
+    }
+    #securedDataDiv {
+        text-align: center;
+    }
+</style>
 <body>
-    <div id="loginDiv">
-        <h2>Login</h2>
+    <div id="loginDiv" class="form-group">
+        <h2>Login Through Your Proper Credential</h2>
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+        <input type="text"  id="username" name="username" required>
         <br>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password"class="mt-3" required>
         <br>
-        <button onclick="login()">Login</button>
+        <button onclick="login()" class="btn btn-success btn-lg mt-2">Login</button>
     </div>
 
     <div id="securedDataDiv" style="display:none;">
         <h2>Secured Data</h2>
-        <button onclick="logout()">Logout</button>
+        <button onclick="logout()" class="btn btn-danger btn-lg">Logout</button>
         <div id="data"></div>
     </div>
 
