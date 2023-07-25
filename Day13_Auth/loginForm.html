@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login and Secured Data</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div id="loginDiv">
+        <h2>Login</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="securedDataDiv" style="display:none;">
+        <h2>Secured Data</h2>
+        <button onclick="logout()">Logout</button>
+        <div id="data"></div>
+    </div>
+
+    <script>
+        // Function to show login form and hide secured data display
+        function showLoginForm() {
+            $('#loginDiv').show();
+            $('#securedDataDiv').hide();
+        }
+
+        // Function to show secured data display and hide login form
+        function showSecuredData() {
+            $('#loginDiv').hide();
+            $('#securedDataDiv').show();
+        }
+
+        // Function to handle login
+        function login() {
+            const username = $('#username').val();
+            const password = $('#password').val();
+
+            $.ajax({
+                url: 'http://localhost:7007/api/login', // Update the URL to the login endpoint on the server
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    username: username,
+                    password: password
+                }),
+                success: function (data) {
+                    // Store the JWT token in sessionStorage
+                    sessionStorage.setItem('token', data.token);
+                    showSecuredData();
+                    fetchSecuredData();
+                },
+                error: function (error) {
+                    console.error('Login failed:', error);
+                    alert('Login failed. Please check your username and password.');
+                }
+            });
+        }
+
+        // Function to handle logout
+        function logout() {
+            // Remove the JWT token from sessionStorage
+            sessionStorage.removeItem('token');
+            showLoginForm();
+        }
+
+        // Function to fetch secured data using the stored token
+        function fetchSecuredData() {
+            const token = sessionStorage.getItem('token');
+
+            $.ajax({
+                url: 'http://localhost:7007/api/emps', // Update the URL to the secured data endpoint on the server
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Pass the token in the 'Authorization' header
+                },
+                success: function (data) {
+                    $('#data').html(JSON.stringify(data, null, 2));
+                },
+                error: function (error) {
+                    console.error('Failed to fetch secured data:', error);
+                    alert('Failed to fetch secured data. Please login again.');
+                    logout();
+                }
+            });
+        }
+
+        // Check if the user is logged in and show the appropriate section
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            showSecuredData();
+            fetchSecuredData();
+        } else {
+            showLoginForm();
+        }
+    </script>
+</body>
+
+</html>
