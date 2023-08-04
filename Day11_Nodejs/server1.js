@@ -11,7 +11,7 @@ const dbConfig = {
   host: "localhost",
   user: "root",
   password: "mahesh",
-  database: "new_schema", // Replace with your database name
+  database: "new_schema", 
   port: 3067
 };
 

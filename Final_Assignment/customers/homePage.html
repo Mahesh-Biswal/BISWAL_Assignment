@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega Menu and Login</title>
+    <!-- Add these lines to include Bootstrap and jQuery -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    <style>
+        img {
+            width: 250px;
+            height: 200px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            /* background-color: rgb(7, 247, 75); */
+        }
+
+        .grid-item {
+            border: 2px solid;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            /* background-color: yellow; */
+        }
+
+        .nav-item:hover {
+            border: 1px solid white;
+        }
+
+        .navbar {
+            /* Make the navbar fill the whole width */
+            width: 100%;
+        }
+
+        .navbar-nav {
+            /* Display the nav-items evenly using flexbox */
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .nav-item {
+            /* Remove padding and margin to take full space in the flex container */
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-link {
+            /* Add some spacing and make the links take equal space in the flex container */
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .checkout-text {
+            padding: 10px;
+            text-align: center;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-weight: bold;
+            color: darkgreen;
+
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        Create a Navigation Menus for E-Commerce Product Selection like amazon.in  
+     -->
+    <div class="heading">
+        <nav class="navbar bg-dark navbar-expand-lg">
+            <div class="container mega-menu">
+                <ul class="navbar-nav">
+                    <li class="nav-item rounded-1 p-1">
+                        <button id="home-page"
+                            class="btn bg-dark border-0 text-white text-center p-2 w-100">Home</button>
+                    </li>
+                    <li class="nav-item rounded-1 p-1" id="all">
+                        <button class="btn bg-dark border-0 text-white text-center p-2 w-100 category-button"
+                            data-category="All">All</button>
+                    </li>
+
+                    <li class="nav-item rounded-1 p-1" id="electronics">
+                        <button class="btn bg-dark border-0 text-white text-center p-2 w-100 category-button"
+                            data-category="electronics">Electronics</button>
+                    </li>
+
+                    <li class="nav-item rounded-1 p-1" id="movies">
+                        <button class="btn bg-dark border-0 text-white text-center p-2 w-100 category-button"
+                            data-category="movies">Movies</button>
+                    </li>
+
+                    <li class="nav-item rounded-1 p-1" id="food">
+                        <button class="btn bg-dark border-0 text-white text-center p-2 w-100 category-button"
+                            data-category="food">Food</button>
+                    </li>
+
+                    <li class="nav-item rounded-1 p-1" id="fashion">
+                        <button class="btn bg-dark border-0 text-white text-center p-2 w-100 category-button"
+                            data-category="fashion">Fashion</button>
+                    </li>
+                    <li class="nav-item rounded-1 p-1" id="login-signup">
+                        <!-- Login Button -->
+                        <button id="loginButton" class="btn bg-dark border-0 text-white text-center p-2 w-100">Login /
+                            SignUp</button>
+                    </li>
+                    <li class="nav-item rounded-1 p-1">
+                        <!-- User Profile Container -->
+                        <div id="userProfileContainer" style="display: none;">
+                            <!-- You can customize the profile display here -->
+                            <!-- For example, you can show the user's name and a "Logout" button -->
+                            <p id="userProfileInfo" class="text-white">Welcome, <span id="userProfileName"
+                                    style="color: rgb(225, 243, 36); font-weight: bold;"></span></p>
+                            <button id="logoutButton"
+                                class="btn bg-dark border-0 text-white text-center p-2 w-100">Logout</button>
+                            <!-- Add the Order History button here -->
+                        </div>
+                    </li>
+                    <li class="nav-item rounded-1 p-1" id="order-history" style="display: none;">
+                        <!-- Order History Button -->
+                        <button id="orderHistoryButton" class="btn bg-dark border-0 text-white text-center p-2 w-100">My
+                            Orders</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="page-body">
+        <div class="p-2 m-3 flex-container" id="homePage-img" style="display: block;">
+            <img class="w-100 p-2 img-fluid category-button" data-category="electronics"
+                src="https://d14vpcucj0dct5.cloudfront.net/filters:format(webp)/images/home_banner/Home_Slider_4.png"
+                alt="">
+            <div style="display: flex;">
+                <img class="img-fluid w-50 p-2 category-button" data-category="food"
+                    src="https://gofood.in/public/assets/images/pro4.jpg" alt="">
+                <img class="w-50 p-2 img-fluid category-button" data-category="movies"
+                    src="https://previews.123rf.com/images/deniex3/deniex32001/deniex3200100659/138298753-it-s-movie-time-poster-cartoon-vector-illustration-cinema-motion-picture-retro-movie-projector.jpg"
+                    alt="">
+            </div>
+            <img class="w-100 p-2 img-fluid category-button" data-category="fashion"
+                src="https://cdn-oss.ginee.com/official/wp-content/uploads/2022/04/image-2693-1024x683.png" alt="">
+        </div>
+        <div id="category-products">
+            <div id="product-list" class="grid-container"></div>
+        </div>
+
+
+        <div id="checkout-page" class="container" style="display: none;">
+            <h1 class="checkout-text"> Checkout Page</h1>
+            <div id="product-details" class="container text-center"></div>
+            <div id="shipping-form" class="container p-3">
+                <form id="shipping-address-form">
+                    <input type="hidden" id="product-id" value="${product.prdId}">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                    <div id="nameError" class="error-message" style="display: none;">Please enter your name.</div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                    <div id="emailError" class="error-message" style="display: none;">Please enter your Email.</div>
+                    <label for="number">Number:</label>
+                    <input type="number" id="number" name="number" class="form-control" required>
+                    <div id="numberError" class="error-message" style="display: none;">Please enter your number.</div>
+                    <label for="shippingAddress">Shipping Address:</label>
+                    <input type="text" id="shippingAddress" name="shippingAddress" class="form-control" required>
+                    <div id="shippingAddressError" class="error-message" style="display: none;">Please enter your full
+                        shipping
+                        address.</div>
+                    <div class="payment-method p-2">
+                        <p style="font-weight: bold; font-style: italic; color: red;">Note:Now we are now accepting only
+                            Cash on delivery</p>
+                        <label for="cash-on-delivery">Cash on delivery</label>
+                        <input type="checkbox" id="cash-on-delivery" name="payment-method" value="cash-on-delivery"
+                            required />
+                        <div id="checkboxError" class="error-message" style="display: none;">Please check the check box.
+                        </div>
+                    </div>
+                    <button type="submit" id="place-order" class="btn btn-primary form-control">Place Order</button>
+                </form>
+            </div>
+        </div>
+        <!-- Add a new div to display the order confirmation message -->
+        <div id="order-confirmation" class="container text-center" style="display: none;">
+            <h2>Order Confirmation</h2>
+            <p>Your order has been placed successfully!</p>
+            <p>Order Number: <span id="orderNumber"></span></p>
+        </div>
+    </div>
+    <div id="orderHistory">
+        
+        <div id="orderHistoryDiv" class=" grid-container"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function refreshPage() {
+                window.location.reload();
+            }
+            const button = document.querySelector("#home-page");
+            button.addEventListener("click", refreshPage);
+            // Event listener for the Login button click
+            document.getElementById('loginButton').addEventListener('click', () => {
+                // Redirect to the customer.html page
+                window.location.href = './customer';
+            });
+
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                // Clear the user information from the local storage upon logout
+                localStorage.removeItem('user');
+                // Redirect to the home page after logout
+                window.location.href = './';
+            });
+
+            // Check if the user is logged in (user information is available in local storage)
+            const userProfileContainer = document.getElementById('userProfileContainer');
+            const userProfileName = document.getElementById('userProfileName');
+            const user = JSON.parse(localStorage.getItem('user'));
+            // console.log(user);
+            if (user) {
+                // User is logged in, show the profile container
+                userProfileContainer.style.display = 'block';
+                document.getElementById('order-history').style.display = 'block';
+                // Display the user's name in the profile
+                userProfileName.textContent = user;
+            } else {
+                // User is not logged in, hide the profile container
+                userProfileContainer.style.display = 'none';
+            }
+            const categoryButtons = document.querySelectorAll('.category-button');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    checkLoggedIn()
+                    document.getElementById('homePage-img').style.display = 'none';
+                    const category = button.getAttribute('data-category');
+                    fetchProductsByCategory(category);
+                });
+            });
+            const arr = [];
+            // Function to fetch products based on category
+            function fetchProductsByCategory(category) {
+                // Construct the URL for fetching products by category
+                const url = `/products?category=${encodeURIComponent(category)}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('category-products').style.display = 'block';
+                        document.getElementById('orderHistory').style.display = 'none';
+                        const productListDiv = document.getElementById('product-list');
+                        productListDiv.innerHTML = ''; // Clear the existing product cards
+
+                        // Create a product card for each product
+                        data.forEach((product) => {
+                            const productCard = document.createElement('div');
+                            productCard.classList.add('product-card');
+                            productCard.classList.add('grid-item');
+
+                            // Display product details
+                            const productName = document.createElement('h3');
+                            productName.textContent = product.prdName;
+                            productCard.appendChild(productName);
+
+                            const productImage = document.createElement('img');
+                            productImage.src = product
+                                .prdImage; // Set the image URL retrieved from the server
+                            productImage.alt = product
+                                .prdName; // Add an alternative text for the image
+                            productCard.appendChild(productImage);
+
+                            const productPrice = document.createElement('p');
+                            productPrice.textContent = `Price: ₹${product.price}`;
+                            productCard.appendChild(productPrice);
+
+                            const productInstock = document.createElement('p');
+                            productInstock.textContent = product.instock ? 'In Stock' :
+                                'Out of Stock';
+                            productCard.appendChild(productInstock);
+
+                            const buyNowButton = document.createElement('button');
+                            buyNowButton.textContent = 'Buy Now';
+                            if (!product.instock) {
+                                buyNowButton.disabled =
+                                    true; // Disable the button if the product is out of stock
+                            } else {
+                                buyNowButton.addEventListener('click', () => {
+                                    // Implement your logic to handle the "Buy Now" button click here
+                                    // Create and display the checkout page when 'Buy Now' is clicked
+                                    const checkoutPage = document.getElementById(
+                                        'checkout-page');
+                                    const productDetailsDiv = document.getElementById(
+                                        'product-details');
+                                    // const shippingFormDiv = document.getElementById('shipping-form');
+
+                                    // Clear existing content
+                                    productDetailsDiv.innerHTML = '';
+                                    // shippingFormDiv.innerHTML = '';
+
+                                    // Display product details
+                                    const productDetails = document.createElement('div');
+                                    // Customize the product details display as needed
+                                    productDetails.innerHTML = `
+                                    <h3>${product.prdName}</h3>
+                                    <img src="${product.prdImage}" alt="${product.prdName}" width="100">
+                                    <p>Price: ₹${product.price}</p>
+
+                                `;
+
+                                    arr.push(prdName = product.prdName);
+                                    arr.push(prdImge = product.prdImage);
+                                    arr.push(prdPrice = product.price);
+
+                                    productDetailsDiv.appendChild(productDetails);
+
+                                    // Display shipping form (add your shipping form inputs here)
+                                    const shippingForm = document.createElement('div');
+                                    // Customize the shipping form inputs as needed
+
+
+                                    // shippingForm.innerHTML = `
+
+                                    // `;
+                                    // shippingFormDiv.appendChild(shippingForm);
+
+                                    // hide the product-list div
+                                    document.getElementById("product-list").style.display =
+                                        "none";
+                                    document.getElementById("all").style.display = "none";
+                                    document.getElementById("electronics").style.display =
+                                        "none";
+                                    document.getElementById("movies").style.display = "none";
+                                    document.getElementById("food").style.display = "none";
+                                    document.getElementById("fashion").style.display = "none";
+                                    document.getElementById("login-signup").style.display =
+                                        "none";
+                                    // Display the checkout page
+                                    checkoutPage.style.display = 'block';
+                                    //------------------------------
+                                    console.log(
+                                        `Buy Now clicked for product ID: ${product.prdId}`
+                                    );
+                                });
+                            }
+                            productCard.appendChild(buyNowButton);
+
+                            productListDiv.appendChild(productCard);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product data:', error);
+                    });
+            }
+            // Add a function to check if the user is logged in
+            function checkLoggedIn() {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user) {
+                    // User is not logged in, redirect to the login page
+                    window.location.href = './customer';
+                }
+            }
+            if (user) {
+                document.getElementById("login-signup").style.display = "none";
+            }
+            // Add an event listener to the "Place Order" button
+            const placeOrderButton = document.getElementById('place-order');
+            placeOrderButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                // Get customer information from local storage
+                checkLoggedIn();
+                // Collect customer information from the form
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const number = document.getElementById('number').value;
+                const address = document.getElementById('shippingAddress').value;
+                // Collect product information (you can customize this based on how you get the product data)
+                const prdName = arr[0];
+                console.log(prdName);
+                const prdImage = arr[1];
+                console.log(prdImage);
+                const price = arr[2];
+                console.log(price);
+
+                // Check if the form is valid before submitting
+                const shippingForm = document.getElementById('shipping-address-form');
+                if (shippingForm.checkValidity()) {
+                    // Generate a random order number (you can customize the range as needed)
+                    const orderNumber = Math.floor(Math.random() * 1000000) + 1;
+                    // Prepare the order data
+                    const orderData = {
+                        name,
+                        email,
+                        number,
+                        address,
+                        prdName,
+                        prdImage,
+                        price,
+                        orderNumber: orderNumber
+                    };
+                    // Send the order data to the server for placement
+                    fetch('/placeOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(orderData),
+                    })
+                        .then((response) => response.json())
+                        .then((result) => {
+                            console.log(result);
+                            // Display the order confirmation message and the order number
+                            const orderConfirmationDiv = document.getElementById(
+                                'order-confirmation');
+                            const orderNumberSpan = document.getElementById('orderNumber');
+                            orderNumberSpan.textContent =
+                                orderNumber; // Use the order ID from the server response
+                            orderConfirmationDiv.style.display = 'block';
+                            document.getElementById('checkout-page').style.display = 'none';
+
+                            // Optionally, you can reset the shipping form after order placement
+                            const shippingForm = document.getElementById('shipping-address-form');
+                            shippingForm.reset();
+                        })
+                        .catch((error) => {
+                            console.error('Error placing order:', error);
+                        });
+                } else {
+                    // If the form is not valid, show error messages for each invalid field
+                    const nameError = document.getElementById('nameError');
+                    const emailError = document.getElementById('emailError');
+                    const numberError = document.getElementById('numberError');
+                    const addressError = document.getElementById('shippingAddressError');
+                    const checkboxError = document.getElementById('checkboxError');
+                    console.log(checkboxError);
+
+                    if (!shippingForm.name.checkValidity()) {
+                        nameError.style.display = 'block';
+                    } else {
+                        nameError.style.display = 'none';
+                    }
+
+                    if (!shippingForm.email.checkValidity()) {
+                        emailError.style.display = 'block';
+                    } else {
+                        emailError.style.display = 'none';
+                    }
+
+                    if (!shippingForm.number.checkValidity()) {
+                        numberError.style.display = 'block';
+                    } else {
+                        numberError.style.display = 'none';
+                    }
+
+                    if (!shippingForm.shippingAddress.checkValidity()) {
+                        addressError.style.display = 'block';
+                    } else {
+                        addressError.style.display = 'none';
+                    }
+                    if (!document.getElementById('cash-on-delivery').checked) {
+                        checkboxError.style.display = 'block';
+                    } else {
+                        checkboxError.style.display = 'none';
+                    }
+
+                }
+            });
+
+            // Add an event listener to the "Order History" button
+            document.getElementById('orderHistoryButton').addEventListener('click', () => {
+                // Fetch the order history for the logged-in customer
+                const customerEmail = localStorage.getItem('customerEmail');
+                console.log(customerEmail);
+
+                document.getElementById('orderHistory').style.display = 'block';
+                document.getElementById('homePage-img').style.display = 'none';
+                document.getElementById('category-products').style.display = 'none';
+                document.getElementById('order-confirmation').style.display = 'none';
+
+                fetch(`/orderHistory?email=${encodeURIComponent(customerEmail)}`)
+                    .then(response => response.json())
+                    .then(orders => {
+                        // Display the order history
+                        const orderHistoryDiv = document.getElementById('orderHistoryDiv');
+                        orderHistoryDiv.innerHTML = '';
+
+                        if (orders.length === 0) {
+                            orderHistoryDiv.innerHTML = '<p>No orders found.</p>';
+                        } else {
+                           
+                            // Create and display the order history list
+                            // const orderHistoryList = document.createElement('ul');
+                            orders.forEach(order => {
+
+                                const orderCard = document.createElement('div');
+                                orderCard.classList.add('order-card');
+                                orderCard.classList.add('grid-item');
+
+                                // Display product details
+                                const productName = document.createElement('h3');
+                                productName.textContent = order.prdName;
+                                orderCard.appendChild(productName);
+
+                                const productImage = document.createElement('img');
+                                productImage.src = order.prdImage; // Set the image URL retrieved from the server
+                                productImage.alt = order.prdName; // Add an alternative text for the image
+                                orderCard.appendChild(productImage);
+
+                                const productPrice = document.createElement('p');
+                                productPrice.textContent = `Total Item Price: ₹${order.price}`;
+                                orderCard.appendChild(productPrice);
+
+
+
+                                // const orderItem = document.createElement('li');
+                                // orderItem.textContent =
+                                //     `Order ID: ${order.orderNumber}, Product: ${order.prdName}, Price: ₹${order.price}, ProductImage: ${order.prdImage}`;
+                                orderHistoryDiv.appendChild(orderCard);
+                            });
+                            // orderHistoryDiv.appendChild(orderHistoryList);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching order history:', error);
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
